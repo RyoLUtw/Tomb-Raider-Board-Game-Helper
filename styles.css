@@ -39,6 +39,10 @@ input {
 }
 
 .hero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
   padding: 1rem 0 1.5rem;
 }
 
@@ -67,6 +71,26 @@ input {
 .craft-status,
 .option-heading p {
   color: var(--text-muted);
+}
+
+.settings-button {
+  width: 46px;
+  min-width: 46px;
+  height: 46px;
+  border: 1px solid var(--border);
+  border-radius: 0;
+  color: var(--text-main);
+  background: rgba(13, 8, 6, 0.55);
+  font-size: 1.35rem;
+  cursor: pointer;
+  transition: transform 180ms ease, background 180ms ease;
+}
+
+.settings-button:hover,
+.settings-button:focus-visible {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.08);
+  outline: none;
 }
 
 .tabs {
@@ -139,6 +163,179 @@ input {
   border: 1px solid var(--border);
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.03);
+}
+
+.progress-panel {
+  margin-bottom: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.03);
+  overflow: hidden;
+}
+
+.progress-panel summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.1rem;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.progress-panel summary::marker {
+  color: var(--accent-strong);
+}
+
+.progress-panel summary span:last-child {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.chapter-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.65rem;
+  padding: 0 1.1rem 1.1rem;
+}
+
+.chapter-objective-controls {
+  display: grid;
+  gap: 0.45rem;
+  padding: 0 1.1rem 1rem;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.chapter-option {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 12px;
+  background: rgba(12, 8, 6, 0.55);
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.chapter-option input {
+  width: 1.05rem;
+  height: 1.05rem;
+  accent-color: var(--accent);
+}
+
+.log-section {
+  display: grid;
+  gap: 0.85rem;
+  margin-top: 1.25rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.log-section h3,
+.group-heading h4 {
+  margin: 0;
+  font-family: "Cinzel", serif;
+}
+
+.group-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.log-grid,
+.map-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.removed-event-group,
+.sight-token-card,
+.door-status-card,
+.removed-event-list,
+.door-list {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.log-grid .counter-card,
+.map-grid .counter-card {
+  margin-top: 0;
+}
+
+.sight-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  min-height: 48px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text-main);
+  background: rgba(12, 8, 6, 0.55);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.sight-button span:first-child {
+  font-size: 1.5rem;
+}
+
+.map-position-card {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.coordinate-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.coordinate-grid label {
+  display: grid;
+  gap: 0.35rem;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.door-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 110px;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 12px;
+  background: rgba(12, 8, 6, 0.55);
+  font-weight: 700;
+}
+
+.enemy-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.enemy-card {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 12px;
+  background: rgba(12, 8, 6, 0.55);
+}
+
+.enemy-card label {
+  display: grid;
+  gap: 0.35rem;
+  color: var(--text-muted);
+  font-weight: 700;
 }
 
 .label-row {
@@ -391,6 +588,12 @@ input {
   gap: 1rem;
 }
 
+.craft-button-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
 .craft-button {
   min-width: 180px;
   padding: 0.95rem 1.25rem;
@@ -400,7 +603,14 @@ input {
   font-weight: 700;
 }
 
+.secondary-craft-button {
+  min-width: 140px;
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.08);
+}
+
 .craft-status {
+  flex: 1 1 220px;
   margin: 0;
 }
 
@@ -415,6 +625,10 @@ input {
   display: grid;
   place-items: center;
   padding: 1rem;
+}
+
+.stacked-modal {
+  z-index: 30;
 }
 
 .modal-backdrop {
@@ -502,14 +716,138 @@ input {
   margin: 0.4rem 0 0.8rem;
 }
 
-.inventory-modal-card {
+.inventory-modal-card,
+.settings-modal-card {
   width: min(520px, 100%);
 }
 
-.inventory-modal-body {
+.search-modal-card,
+.treasure-modal-card {
+  width: min(520px, 100%);
+}
+
+.inventory-modal-body,
+.settings-modal-body {
   display: grid;
   gap: 1rem;
   margin-top: 1.2rem;
+}
+
+.profile-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.profile-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: stretch;
+  gap: 0.55rem;
+}
+
+.profile-button {
+  width: 100%;
+  padding: 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  color: var(--text-main);
+  background: rgba(12, 8, 6, 0.55);
+  text-align: left;
+  cursor: pointer;
+  transition: transform 180ms ease, background 180ms ease;
+}
+
+.profile-button:hover,
+.profile-button:focus-visible {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.06);
+  outline: none;
+}
+
+.profile-button.active {
+  border-color: var(--accent-strong);
+  background: rgba(210, 155, 85, 0.14);
+}
+
+.profile-button strong,
+.profile-button span {
+  display: block;
+}
+
+.profile-button span {
+  margin-top: 0.2rem;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.profile-edit-button {
+  width: 42px;
+  min-width: 42px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.profile-edit-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.search-modal-body,
+.treasure-modal-body {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.2rem;
+}
+
+.search-draw-group {
+  margin-top: 0;
+}
+
+.search-slider-controls {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 48px;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.treasure-choice-list {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.treasure-choice-row {
+  display: grid;
+  gap: 0.65rem;
+  padding: 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: rgba(12, 8, 6, 0.55);
+}
+
+.treasure-choice-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.treasure-choice-header strong {
+  text-transform: capitalize;
+}
+
+.treasure-choice-header span {
+  color: var(--text-muted);
+}
+
+.treasure-choice-controls {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) 42px;
+  align-items: center;
+  gap: 0.65rem;
 }
 
 .modal-copy {
@@ -576,6 +914,31 @@ input {
   accent-color: var(--accent);
 }
 
+.tabs,
+.tab-button,
+.panel-card,
+.modal-card,
+.hp-group,
+.progress-panel,
+.chapter-option,
+.log-section,
+.sight-button,
+.door-row,
+.enemy-card,
+.inventory-section,
+.counter-card,
+.resource-card,
+.inventory-item,
+.modal-field,
+.resource-input,
+.recipe-button,
+.option-button,
+.profile-button,
+.profile-edit-button,
+.discard-option {
+  border-radius: 0;
+}
+
 @keyframes rise {
   from {
     opacity: 0;
@@ -594,6 +957,10 @@ input {
     padding-top: 1rem;
   }
 
+  .hero {
+    align-items: flex-start;
+  }
+
   .tabs {
     display: grid;
     width: 100%;
@@ -607,6 +974,11 @@ input {
     align-items: stretch;
   }
 
+  .craft-button-stack {
+    display: grid;
+    width: 100%;
+  }
+
   .craft-button {
     width: 100%;
   }
@@ -615,6 +987,14 @@ input {
   .option-button {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .profile-row {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-edit-button {
+    width: 100%;
   }
 
   .special-dice-card {

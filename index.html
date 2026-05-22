@@ -12,13 +12,19 @@
 <body>
   <main class="app-shell">
     <header class="hero">
-      <p class="eyebrow">Tomb Raider: The Crypt of Chronos</p>
-      <h1>Board Game Helper</h1>
-      <p class="subtitle">Track Lara's loadout and resolve crafting without touching the paper boards.</p>
+      <div>
+        <p class="eyebrow">Tomb Raider: The Crypt of Chronos</p>
+        <h1>Board Game Helper</h1>
+        <p class="subtitle">Track Lara's loadout and resolve crafting without touching the paper boards.</p>
+      </div>
+      <button id="open-settings-modal" class="settings-button" type="button" aria-label="Open settings">&#9881;</button>
     </header>
 
     <div class="tabs" role="tablist" aria-label="Board helper sections">
-      <button class="tab-button active" id="tab-lara" role="tab" aria-selected="true" aria-controls="panel-lara" data-tab-target="lara">
+      <button class="tab-button active" id="tab-adventure" role="tab" aria-selected="true" aria-controls="panel-adventure" data-tab-target="adventure">
+        Adventure Log
+      </button>
+      <button class="tab-button" id="tab-lara" role="tab" aria-selected="false" aria-controls="panel-lara" data-tab-target="lara">
         Lara Board
       </button>
       <button class="tab-button" id="tab-craft" role="tab" aria-selected="false" aria-controls="panel-craft" data-tab-target="craft">
@@ -26,7 +32,126 @@
       </button>
     </div>
 
-    <section class="tab-panel active" id="panel-lara" role="tabpanel" aria-labelledby="tab-lara" data-tab-panel="lara">
+    <section class="tab-panel active" id="panel-adventure" role="tabpanel" aria-labelledby="tab-adventure" data-tab-panel="adventure">
+      <div class="panel-card">
+        <div class="section-heading">
+          <h2>Adventure Log</h2>
+          <p>Track campaign progress, events, status, and map state.</p>
+        </div>
+
+        <details class="progress-panel" id="chapter-progress">
+          <summary>
+            <span>Chapter Progress</span>
+            <span id="chapter-progress-summary">0 / 15 complete</span>
+          </summary>
+          <div id="chapter-list" class="chapter-list" aria-label="Chapter checklist"></div>
+        </details>
+
+        <details class="progress-panel" id="chapter-objectives">
+          <summary>
+            <span>Chapter Objectives</span>
+            <span id="chapter-objective-summary">Chapter 1</span>
+          </summary>
+          <div class="chapter-objective-controls">
+            <label for="chapter-objective-select">Chapter</label>
+            <select id="chapter-objective-select" class="modal-field"></select>
+          </div>
+          <div id="chapter-objective-list" class="chapter-list" aria-label="Chapter objective checklist"></div>
+        </details>
+
+        <section class="log-section">
+          <div class="inventory-heading">
+            <div>
+              <h3>Event Cards</h3>
+              <p>Discarded and removed event cards.</p>
+            </div>
+          </div>
+          <div class="log-grid">
+            <div class="counter-card">
+              <span class="counter-label">Discarded</span>
+              <div class="tracker-controls">
+                <button type="button" class="stepper-button" id="decrease-event-discarded" aria-label="Decrease discarded event cards">-</button>
+                <span id="event-discarded-value" class="tracker-value">0</span>
+                <button type="button" class="stepper-button" id="increase-event-discarded" aria-label="Increase discarded event cards">+</button>
+              </div>
+            </div>
+            <div class="removed-event-group counter-card">
+              <div class="group-heading">
+                <span class="counter-label">Removed Event Cards</span>
+              </div>
+              <div class="removed-event-list" id="event-removed-list">
+                <label class="chapter-option"><input type="checkbox" data-event-removed="upgrade">+UPGRADE</label>
+                <label class="chapter-option"><input type="checkbox" data-event-removed="special1">+SPECIAL</label>
+                <label class="chapter-option"><input type="checkbox" data-event-removed="special2">+SPECIAL</label>
+                <label class="chapter-option"><input type="checkbox" data-event-removed="resources">+RESOURCES</label>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="log-section">
+          <div class="inventory-heading">
+            <div>
+              <h3>Status</h3>
+              <p>Invaded level and sight token.</p>
+            </div>
+          </div>
+          <div class="log-grid">
+            <div class="counter-card">
+              <span class="counter-label">Invaded Level</span>
+              <div class="tracker-controls">
+                <button type="button" class="stepper-button" id="decrease-invaded-level" aria-label="Decrease invaded level">-</button>
+                <input id="invaded-level-input" class="resource-input" type="number" min="0" value="0">
+                <button type="button" class="stepper-button" id="increase-invaded-level" aria-label="Increase invaded level">+</button>
+              </div>
+            </div>
+            <div class="sight-token-card counter-card">
+              <span class="counter-label">Sight Token</span>
+              <button type="button" class="sight-button" id="sight-token" aria-label="Toggle sight token" aria-pressed="true">
+                <span id="sight-token-label">Hidden</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section class="log-section">
+          <div class="inventory-heading">
+            <div>
+              <h3>Map</h3>
+              <p>Lara, enemies, and door state.</p>
+            </div>
+          </div>
+          <div class="map-grid">
+            <div class="map-position-card counter-card">
+              <span class="counter-label">Lara's Position</span>
+              <div class="coordinate-grid">
+                <label>X <input id="lara-x" class="resource-input" type="number" min="1" max="16" value="1"></label>
+                <label>Y <input id="lara-y" class="resource-input" type="number" min="1" max="16" value="1"></label>
+              </div>
+            </div>
+            <div class="map-position-card counter-card">
+              <div class="inventory-heading">
+                <span class="counter-label">Enemies' Position</span>
+                <button type="button" class="add-button" id="add-enemy" aria-label="Add enemy">+</button>
+              </div>
+              <div id="enemy-list" class="enemy-list empty-list">No enemies placed.</div>
+            </div>
+            <div class="door-status-card counter-card">
+              <div class="group-heading">
+                <span class="counter-label">Door Status</span>
+              </div>
+              <div class="door-list">
+                <div class="door-row"><span>Red Door</span><button type="button" class="modal-secondary door-toggle" data-door="red">close</button></div>
+                <div class="door-row"><span>Blue Door</span><button type="button" class="modal-secondary door-toggle" data-door="blue">close</button></div>
+                <div class="door-row"><span>Gold Door</span><button type="button" class="modal-secondary door-toggle" data-door="gold">close</button></div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="panel-lara" role="tabpanel" aria-labelledby="tab-lara" data-tab-panel="lara" hidden>
       <div class="panel-card">
         <div class="section-heading">
           <h2>Lara Board</h2>
@@ -140,7 +265,10 @@
         </div>
 
         <div class="craft-actions">
-          <button id="open-craft-modal" class="craft-button" type="button">Craft Item</button>
+          <div class="craft-button-stack">
+            <button id="open-search-modal" class="craft-button secondary-craft-button" type="button">Search</button>
+            <button id="open-craft-modal" class="craft-button" type="button">Craft Item</button>
+          </div>
           <p id="craft-status" class="craft-status" aria-live="polite">No items crafted yet.</p>
         </div>
       </div>
@@ -175,6 +303,147 @@
         <div class="option-actions">
           <button type="button" class="option-button" data-craft-option="5">Draw 1<span>Cost: 5</span></button>
           <button type="button" class="option-button" data-craft-option="7">Draw 2 and keep 1<span>Cost: 7</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="search-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="search-modal-title" hidden>
+    <div class="modal-backdrop" data-close-search-modal="true"></div>
+    <div class="modal-card search-modal-card">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">Search</p>
+          <h2 id="search-modal-title">Draw resources</h2>
+        </div>
+        <button id="close-search-modal" class="icon-button" type="button" aria-label="Close search modal">X</button>
+      </div>
+
+      <div class="search-modal-body">
+        <p id="search-pool-summary" class="modal-copy">Pool ready.</p>
+        <div class="field-group search-draw-group">
+          <div class="label-row">
+            <label for="search-draw-slider">Resources to draw</label>
+            <span id="search-draw-value" class="pill">1</span>
+          </div>
+          <div class="search-slider-controls">
+            <button type="button" class="stepper-button" id="decrease-search-draw" aria-label="Draw fewer resources">-</button>
+            <input id="search-draw-slider" class="hp-slider" type="range" min="1" max="40" value="1">
+            <button type="button" class="stepper-button" id="increase-search-draw" aria-label="Draw more resources">+</button>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="modal-secondary" id="cancel-search-draw">Cancel</button>
+          <button type="button" class="modal-action" id="confirm-search-draw">Draw</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="treasure-modal" class="modal stacked-modal" role="dialog" aria-modal="true" aria-labelledby="treasure-modal-title" hidden>
+    <div class="modal-backdrop" data-close-treasure-modal="true"></div>
+    <div class="modal-card treasure-modal-card">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">Treasure Wild</p>
+          <h2 id="treasure-modal-title">Choose resources to spend</h2>
+        </div>
+        <button id="close-treasure-modal" class="icon-button" type="button" aria-label="Close treasure modal">X</button>
+      </div>
+
+      <div class="treasure-modal-body">
+        <p id="treasure-modal-copy" class="modal-copy">Treasure can replace required resources.</p>
+        <div id="treasure-choice-list" class="treasure-choice-list"></div>
+        <p id="treasure-cost-summary" class="modal-copy">Cost: 0 resources</p>
+        <div class="modal-actions">
+          <button type="button" class="modal-secondary" id="cancel-treasure-choice">Cancel</button>
+          <button type="button" class="modal-action" id="confirm-treasure-choice">Spend</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="settings-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title" hidden>
+    <div class="modal-backdrop" data-close-settings-modal="true"></div>
+    <div class="modal-card settings-modal-card">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">Settings</p>
+          <h2 id="settings-modal-title">Savegame Profiles</h2>
+        </div>
+        <button id="close-settings-modal" class="icon-button" type="button" aria-label="Close settings modal">X</button>
+      </div>
+
+      <div class="settings-modal-body">
+        <div id="profile-list" class="profile-list" aria-label="Savegame profiles"></div>
+        <div class="modal-actions">
+          <button type="button" class="modal-secondary" id="create-profile">+</button>
+          <button type="button" class="modal-secondary" id="download-profile">Download</button>
+          <button type="button" class="modal-action" id="upload-profile">Upload</button>
+          <input id="upload-profile-input" type="file" accept="application/json,.json" hidden>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="profile-name-modal" class="modal stacked-modal" role="dialog" aria-modal="true" aria-labelledby="profile-name-modal-title" hidden>
+    <div class="modal-backdrop" data-close-profile-name-modal="true"></div>
+    <div class="modal-card inventory-modal-card">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">Savegame</p>
+          <h2 id="profile-name-modal-title">New savegame profile</h2>
+        </div>
+        <button id="close-profile-name-modal" class="icon-button" type="button" aria-label="Close savegame name modal">X</button>
+      </div>
+      <form id="profile-name-form" class="modal-form inventory-modal-body">
+        <label>
+          Save game name
+          <input id="profile-name-input" class="modal-field" type="text" required>
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="modal-secondary" id="cancel-profile-name">Cancel</button>
+          <button type="submit" class="modal-action" id="confirm-profile-name">Create</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="objective-complete-modal" class="modal stacked-modal" role="dialog" aria-modal="true" aria-labelledby="objective-complete-modal-title" hidden>
+    <div class="modal-backdrop" data-close-objective-complete-modal="true"></div>
+    <div class="modal-card inventory-modal-card">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">Chapter Objectives</p>
+          <h2 id="objective-complete-modal-title">Mark chapter complete?</h2>
+        </div>
+        <button id="close-objective-complete-modal" class="icon-button" type="button" aria-label="Close objective complete modal">X</button>
+      </div>
+      <div class="inventory-modal-body">
+        <p id="objective-complete-copy" class="modal-copy">All objectives are complete.</p>
+        <div class="modal-actions">
+          <button type="button" class="modal-secondary" id="decline-objective-complete">No</button>
+          <button type="button" class="modal-action" id="confirm-objective-complete">Yes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="chapter-change-modal" class="modal stacked-modal" role="dialog" aria-modal="true" aria-labelledby="chapter-change-modal-title" hidden>
+    <div class="modal-backdrop" data-close-chapter-change-modal="true"></div>
+    <div class="modal-card inventory-modal-card">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">Chapter Objectives</p>
+          <h2 id="chapter-change-modal-title">Change chapter?</h2>
+        </div>
+        <button id="close-chapter-change-modal" class="icon-button" type="button" aria-label="Close chapter change modal">X</button>
+      </div>
+      <div class="inventory-modal-body">
+        <p id="chapter-change-copy" class="modal-copy">Changing chapter will reset objective, map, and sight token values.</p>
+        <div class="modal-actions">
+          <button type="button" class="modal-secondary" id="cancel-chapter-change">Cancel</button>
+          <button type="button" class="modal-action" id="confirm-chapter-change">Change</button>
         </div>
       </div>
     </div>
