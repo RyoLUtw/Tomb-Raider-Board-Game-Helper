@@ -45,27 +45,51 @@
           </div>
         </div>
 
-        <div class="field-grid">
-          <label class="field-card" for="outfit">
-            <span>Outfit</span>
-            <input id="outfit" name="outfit" type="text" placeholder="Enter outfit">
-          </label>
-          <label class="field-card" for="weapon-1">
-            <span>Weapon 1</span>
-            <input id="weapon-1" name="weapon-1" type="text" placeholder="Enter weapon">
-          </label>
-          <label class="field-card" for="weapon-2">
-            <span>Weapon 2</span>
-            <input id="weapon-2" name="weapon-2" type="text" placeholder="Enter weapon">
-          </label>
-          <label class="field-card" for="ability-1">
-            <span>Ability 1</span>
-            <input id="ability-1" name="ability-1" type="text" placeholder="Enter ability">
-          </label>
-          <label class="field-card" for="ability-2">
-            <span>Ability 2</span>
-            <input id="ability-2" name="ability-2" type="text" placeholder="Enter ability">
-          </label>
+        <div class="counter-card special-dice-card">
+          <div>
+            <span class="counter-label">Special Dice</span>
+            <p class="counter-copy">Maximum 6.</p>
+          </div>
+          <div class="tracker-controls" data-counter="specialDice">
+            <button type="button" class="stepper-button" data-step="-1" aria-label="Decrease special dice">-</button>
+            <span id="special-dice-value" class="tracker-value">0</span>
+            <button type="button" class="stepper-button" data-step="1" aria-label="Increase special dice">+</button>
+          </div>
+        </div>
+
+        <div class="inventory-grid">
+          <section class="inventory-section" data-inventory-section="weapon">
+            <div class="inventory-heading">
+              <div>
+                <h3>Weapons</h3>
+                <p id="weapon-count">0 / 2</p>
+              </div>
+              <button type="button" class="add-button" data-add-item="weapon" aria-label="Add weapon">+</button>
+            </div>
+            <div id="weapon-list" class="inventory-list empty-list">No weapons equipped.</div>
+          </section>
+
+          <section class="inventory-section" data-inventory-section="outfit">
+            <div class="inventory-heading">
+              <div>
+                <h3>Outfit</h3>
+                <p id="outfit-count">0 / 1</p>
+              </div>
+              <button type="button" class="add-button" data-add-item="outfit" aria-label="Add outfit">+</button>
+            </div>
+            <div id="outfit-list" class="inventory-list empty-list">No outfit equipped.</div>
+          </section>
+
+          <section class="inventory-section" data-inventory-section="ability">
+            <div class="inventory-heading">
+              <div>
+                <h3>Abilities</h3>
+                <p id="ability-count">0 / 2</p>
+              </div>
+              <button type="button" class="add-button" data-add-item="ability" aria-label="Add ability">+</button>
+            </div>
+            <div id="ability-list" class="inventory-list empty-list">No abilities learned.</div>
+          </section>
         </div>
       </div>
     </section>
@@ -137,7 +161,7 @@
       <div class="recipe-list">
         <button type="button" class="recipe-button" data-craft-item="bullets">5 Bullets<span>1 oil + 1 scrap</span></button>
         <button type="button" class="recipe-button" data-craft-item="medpack">3 HP Med Pack<span>1 cloth + 1 oil</span></button>
-        <button type="button" class="recipe-button" data-craft-item="special-dice">2 Special Die<span>1 scrap + 1 cloth</span></button>
+        <button type="button" class="recipe-button" data-craft-item="special-dice">1 Special Die<span>1 scrap + 1 cloth</span></button>
         <button type="button" class="recipe-button" data-craft-item="weapon">Weapon<span>Choose draw 1 or draw 2 keep 1</span></button>
         <button type="button" class="recipe-button" data-craft-item="outfit">Outfit<span>Choose draw 1 or draw 2 keep 1</span></button>
         <button type="button" class="recipe-button" data-craft-item="ability">Ability<span>Choose draw 1 or draw 2 keep 1</span></button>
@@ -153,6 +177,20 @@
           <button type="button" class="option-button" data-craft-option="7">Draw 2 and keep 1<span>Cost: 7</span></button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <div id="inventory-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="inventory-modal-title" hidden>
+    <div class="modal-backdrop" data-close-inventory-modal="true"></div>
+    <div class="modal-card inventory-modal-card">
+      <div class="modal-header">
+        <div>
+          <p id="inventory-modal-eyebrow" class="eyebrow">Lara Board</p>
+          <h2 id="inventory-modal-title">Add item</h2>
+        </div>
+        <button id="close-inventory-modal" class="icon-button" type="button" aria-label="Close inventory modal">X</button>
+      </div>
+      <div id="inventory-modal-body" class="inventory-modal-body"></div>
     </div>
   </div>
 
