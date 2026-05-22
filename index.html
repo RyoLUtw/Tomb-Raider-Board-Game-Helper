@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tomb Raider Board Game Helper</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="hero">
+      <p class="eyebrow">Tomb Raider: The Crypt of Chronos</p>
+      <h1>Board Game Helper</h1>
+      <p class="subtitle">Track Lara's loadout and resolve crafting without touching the paper boards.</p>
+    </header>
+
+    <div class="tabs" role="tablist" aria-label="Board helper sections">
+      <button class="tab-button active" id="tab-lara" role="tab" aria-selected="true" aria-controls="panel-lara" data-tab-target="lara">
+        Lara Board
+      </button>
+      <button class="tab-button" id="tab-craft" role="tab" aria-selected="false" aria-controls="panel-craft" data-tab-target="craft">
+        Craft Bench
+      </button>
+    </div>
+
+    <section class="tab-panel active" id="panel-lara" role="tabpanel" aria-labelledby="tab-lara" data-tab-panel="lara">
+      <div class="panel-card">
+        <div class="section-heading">
+          <h2>Lara Board</h2>
+          <p>Track health, outfit, weapons, and abilities.</p>
+        </div>
+
+        <div class="field-group hp-group">
+          <div class="label-row">
+            <label for="hp-slider">HP</label>
+            <span id="hp-value" class="pill">10</span>
+          </div>
+          <input id="hp-slider" class="hp-slider" type="range" min="1" max="10" value="10">
+          <div class="slider-scale">
+            <span>1</span>
+            <span>10</span>
+          </div>
+        </div>
+
+        <div class="field-grid">
+          <label class="field-card" for="outfit">
+            <span>Outfit</span>
+            <input id="outfit" name="outfit" type="text" placeholder="Enter outfit">
+          </label>
+          <label class="field-card" for="weapon-1">
+            <span>Weapon 1</span>
+            <input id="weapon-1" name="weapon-1" type="text" placeholder="Enter weapon">
+          </label>
+          <label class="field-card" for="weapon-2">
+            <span>Weapon 2</span>
+            <input id="weapon-2" name="weapon-2" type="text" placeholder="Enter weapon">
+          </label>
+          <label class="field-card" for="ability-1">
+            <span>Ability 1</span>
+            <input id="ability-1" name="ability-1" type="text" placeholder="Enter ability">
+          </label>
+          <label class="field-card" for="ability-2">
+            <span>Ability 2</span>
+            <input id="ability-2" name="ability-2" type="text" placeholder="Enter ability">
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="panel-craft" role="tabpanel" aria-labelledby="tab-craft" data-tab-panel="craft" hidden>
+      <div class="panel-card">
+        <div class="section-heading">
+          <h2>Craft Bench</h2>
+          <p>Manage resources and spend them directly from the crafting flow.</p>
+        </div>
+
+        <div class="resource-grid">
+          <div class="resource-card" data-resource="oil">
+            <span class="resource-name">Oil</span>
+            <div class="resource-controls">
+              <button type="button" class="stepper-button" data-step="-1" aria-label="Decrease oil">-</button>
+              <input id="resource-oil" class="resource-input" type="number" min="0" value="0">
+              <button type="button" class="stepper-button" data-step="1" aria-label="Increase oil">+</button>
+            </div>
+          </div>
+
+          <div class="resource-card" data-resource="cloth">
+            <span class="resource-name">Cloth</span>
+            <div class="resource-controls">
+              <button type="button" class="stepper-button" data-step="-1" aria-label="Decrease cloth">-</button>
+              <input id="resource-cloth" class="resource-input" type="number" min="0" value="0">
+              <button type="button" class="stepper-button" data-step="1" aria-label="Increase cloth">+</button>
+            </div>
+          </div>
+
+          <div class="resource-card" data-resource="scrap">
+            <span class="resource-name">Scrap</span>
+            <div class="resource-controls">
+              <button type="button" class="stepper-button" data-step="-1" aria-label="Decrease scrap">-</button>
+              <input id="resource-scrap" class="resource-input" type="number" min="0" value="0">
+              <button type="button" class="stepper-button" data-step="1" aria-label="Increase scrap">+</button>
+            </div>
+          </div>
+
+          <div class="resource-card" data-resource="treasure">
+            <span class="resource-name">Treasure</span>
+            <div class="resource-controls">
+              <button type="button" class="stepper-button" data-step="-1" aria-label="Decrease treasure">-</button>
+              <input id="resource-treasure" class="resource-input" type="number" min="0" value="0">
+              <button type="button" class="stepper-button" data-step="1" aria-label="Increase treasure">+</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="craft-actions">
+          <button id="open-craft-modal" class="craft-button" type="button">Craft Item</button>
+          <p id="craft-status" class="craft-status" aria-live="polite">No items crafted yet.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="craft-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="craft-modal-title" hidden>
+    <div class="modal-backdrop" data-close-modal="true"></div>
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">Craft Bench</p>
+          <h2 id="craft-modal-title">Choose an item to craft</h2>
+        </div>
+        <button id="close-craft-modal" class="icon-button" type="button" aria-label="Close craft modal">X</button>
+      </div>
+
+      <div class="recipe-list">
+        <button type="button" class="recipe-button" data-craft-item="bullets">5 Bullets<span>1 oil + 1 scrap</span></button>
+        <button type="button" class="recipe-button" data-craft-item="medpack">3 HP Med Pack<span>1 cloth + 1 oil</span></button>
+        <button type="button" class="recipe-button" data-craft-item="special-dice">2 Special Die<span>1 scrap + 1 cloth</span></button>
+        <button type="button" class="recipe-button" data-craft-item="weapon">Weapon<span>Choose draw 1 or draw 2 keep 1</span></button>
+        <button type="button" class="recipe-button" data-craft-item="outfit">Outfit<span>Choose draw 1 or draw 2 keep 1</span></button>
+        <button type="button" class="recipe-button" data-craft-item="ability">Ability<span>Choose draw 1 or draw 2 keep 1</span></button>
+      </div>
+
+      <div id="craft-option-panel" class="craft-option-panel" hidden>
+        <div class="option-heading">
+          <h3 id="craft-option-title">Choose a craft option</h3>
+          <p id="craft-option-copy">Select how you want to resolve this craft.</p>
+        </div>
+        <div class="option-actions">
+          <button type="button" class="option-button" data-craft-option="5">Draw 1<span>Cost: 5</span></button>
+          <button type="button" class="option-button" data-craft-option="7">Draw 2 and keep 1<span>Cost: 7</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
