@@ -11,6 +11,7 @@ const chapterObjectiveSelect = document.getElementById("chapter-objective-select
 const chapterObjectiveList = document.getElementById("chapter-objective-list");
 const chapterObjectiveSummary = document.getElementById("chapter-objective-summary");
 const craftModal = document.getElementById("craft-modal");
+const craftOptionModal = document.getElementById("craft-option-modal");
 const searchModal = document.getElementById("search-modal");
 const treasureModal = document.getElementById("treasure-modal");
 const settingsModal = document.getElementById("settings-modal");
@@ -21,6 +22,7 @@ const inventoryModal = document.getElementById("inventory-modal");
 const openCraftModalButton = document.getElementById("open-craft-modal");
 const openSearchModalButton = document.getElementById("open-search-modal");
 const closeCraftModalButton = document.getElementById("close-craft-modal");
+const closeCraftOptionModalButton = document.getElementById("close-craft-option-modal");
 const closeSearchModalButton = document.getElementById("close-search-modal");
 const closeTreasureModalButton = document.getElementById("close-treasure-modal");
 const closeSettingsModalButton = document.getElementById("close-settings-modal");
@@ -114,17 +116,20 @@ const defaultProfileId = "default";
 const defaultProfileName = "Default Save";
 const chapterCount = 15;
 const chapterObjectiveCounts = [3, 2, 2, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 1, 2];
+const exitMapObjectiveLabel = "Exit map";
 
 const inventoryConfig = {
   weapon: { label: "weapon", plural: "weapons", limit: 2, listId: "weapon-list", countId: "weapon-count" },
   outfit: { label: "outfit", plural: "outfits", limit: 1, listId: "outfit-list", countId: "outfit-count" },
   ability: { label: "ability", plural: "abilities", limit: 2, listId: "ability-list", countId: "ability-count" },
+  research: { label: "research card", plural: "research cards", limit: Infinity, listId: "research-list", countId: "research-count" },
 };
 
 const state = {
   weapon: [],
   outfit: [],
   ability: [],
+  research: [],
   specialDice: 0,
   chapters: Array.from({ length: chapterCount }, () => false),
   chapterObjectives: createEmptyChapterObjectives(),
@@ -225,7 +230,7 @@ function getLastCompletedChapter(chapters = state.chapters) {
 
 function createEmptyChapterObjectives() {
   return Array.from({ length: chapterCount }, (_, chapterIndex) =>
-    Array.from({ length: chapterObjectiveCounts[chapterIndex] }, () => false)
+    Array.from({ length: chapterObjectiveCounts[chapterIndex] + 1 }, () => false)
   );
 }
 
@@ -267,6 +272,7 @@ function createSavePayload(name = defaultProfileName) {
       weapon: state.weapon,
       outfit: state.outfit,
       ability: state.ability,
+      research: state.research,
       specialDice: state.specialDice,
       chapters: state.chapters,
       chapterObjectives: state.chapterObjectives,
@@ -305,10 +311,11 @@ function normalizeSavePayload(payload, fallbackId = `profile-${Date.now()}`) {
       weapon: Array.isArray(sourceState.weapon) ? sourceState.weapon : [],
       outfit: Array.isArray(sourceState.outfit) ? sourceState.outfit : [],
       ability: Array.isArray(sourceState.ability) ? sourceState.ability : [],
+      research: Array.isArray(sourceState.research) ? sourceState.research : [],
       specialDice: Math.min(6, clampNumber(sourceState.specialDice)),
       chapters: Array.from({ length: chapterCount }, (_, index) => Boolean(sourceState.chapters?.[index])),
       chapterObjectives: Array.from({ length: chapterCount }, (_, chapterIndex) =>
-        Array.from({ length: chapterObjectiveCounts[chapterIndex] }, (_, objectiveIndex) =>
+        Array.from({ length: chapterObjectiveCounts[chapterIndex] + 1 }, (_, objectiveIndex) =>
           Boolean(sourceObjectives[chapterIndex]?.[objectiveIndex])
         )
       ),
@@ -387,6 +394,7 @@ function applySaveProfile(profile) {
   state.weapon = normalized.state.weapon;
   state.outfit = normalized.state.outfit;
   state.ability = normalized.state.ability;
+  state.research = normalized.state.research;
   state.specialDice = normalized.state.specialDice;
   state.chapters = normalized.state.chapters;
   state.chapterObjectives = normalized.state.chapterObjectives;
@@ -401,7 +409,8 @@ function applySaveProfile(profile) {
     normalized.itemId,
     ...state.weapon.map((item) => clampNumber(item.id)),
     ...state.outfit.map((item) => clampNumber(item.id)),
-    ...state.ability.map((item) => clampNumber(item.id))
+    ...state.ability.map((item) => clampNumber(item.id)),
+    ...state.research.map((item) => clampNumber(item.id))
   );
 
   hpSlider.value = normalized.hp;
@@ -440,6 +449,7 @@ function createProfileFromName(name) {
   state.weapon = [];
   state.outfit = [];
   state.ability = [];
+  state.research = [];
   state.specialDice = 0;
   state.chapters = Array.from({ length: chapterCount }, () => false);
   state.chapterObjectives = createEmptyChapterObjectives();
@@ -479,7 +489,7 @@ function closeProfileNameModal() {
   profileNameMode = "create";
   profileNameProfileId = null;
 
-  if (craftModal.hidden && searchModal.hidden && treasureModal.hidden && settingsModal.hidden && objectiveCompleteModal.hidden && chapterChangeModal.hidden && inventoryModal.hidden) {
+  if (craftModal.hidden && craftOptionModal.hidden && searchModal.hidden && treasureModal.hidden && settingsModal.hidden && objectiveCompleteModal.hidden && chapterChangeModal.hidden && inventoryModal.hidden) {
     document.body.style.overflow = "";
   }
 }
@@ -874,7 +884,7 @@ function openSearchModal() {
 function closeSearchModal() {
   searchModal.hidden = true;
 
-  if (craftModal.hidden && treasureModal.hidden && settingsModal.hidden && profileNameModal.hidden && objectiveCompleteModal.hidden && chapterChangeModal.hidden && inventoryModal.hidden) {
+  if (craftModal.hidden && craftOptionModal.hidden && treasureModal.hidden && settingsModal.hidden && profileNameModal.hidden && objectiveCompleteModal.hidden && chapterChangeModal.hidden && inventoryModal.hidden) {
     document.body.style.overflow = "";
   }
 }
@@ -946,7 +956,7 @@ function closeTreasureChoiceModal() {
   treasureChoiceList.replaceChildren();
   pendingTreasureChoice = null;
 
-  if (craftModal.hidden && searchModal.hidden && settingsModal.hidden && profileNameModal.hidden && objectiveCompleteModal.hidden && chapterChangeModal.hidden && inventoryModal.hidden) {
+  if (craftModal.hidden && craftOptionModal.hidden && searchModal.hidden && settingsModal.hidden && profileNameModal.hidden && objectiveCompleteModal.hidden && chapterChangeModal.hidden && inventoryModal.hidden) {
     document.body.style.overflow = "";
   }
 }
@@ -961,7 +971,7 @@ function openSettingsModal() {
 function closeSettingsModal() {
   settingsModal.hidden = true;
 
-  if (craftModal.hidden && searchModal.hidden && treasureModal.hidden && profileNameModal.hidden && objectiveCompleteModal.hidden && chapterChangeModal.hidden && inventoryModal.hidden) {
+  if (craftModal.hidden && craftOptionModal.hidden && searchModal.hidden && treasureModal.hidden && profileNameModal.hidden && objectiveCompleteModal.hidden && chapterChangeModal.hidden && inventoryModal.hidden) {
     document.body.style.overflow = "";
   }
 }
@@ -977,7 +987,7 @@ function closeObjectiveCompleteModal() {
   objectiveCompleteModal.hidden = true;
   pendingObjectiveCompleteChapter = null;
 
-  if (craftModal.hidden && searchModal.hidden && treasureModal.hidden && settingsModal.hidden && profileNameModal.hidden && chapterChangeModal.hidden && inventoryModal.hidden) {
+  if (craftModal.hidden && craftOptionModal.hidden && searchModal.hidden && treasureModal.hidden && settingsModal.hidden && profileNameModal.hidden && chapterChangeModal.hidden && inventoryModal.hidden) {
     document.body.style.overflow = "";
   }
 }
@@ -1005,7 +1015,7 @@ function closeChapterChangeModal() {
   pendingChapterChange = null;
   chapterObjectiveSelect.value = String(selectedObjectiveChapter);
 
-  if (craftModal.hidden && searchModal.hidden && treasureModal.hidden && settingsModal.hidden && profileNameModal.hidden && objectiveCompleteModal.hidden && inventoryModal.hidden) {
+  if (craftModal.hidden && craftOptionModal.hidden && searchModal.hidden && treasureModal.hidden && settingsModal.hidden && profileNameModal.hidden && objectiveCompleteModal.hidden && inventoryModal.hidden) {
     document.body.style.overflow = "";
   }
 }
@@ -1025,7 +1035,7 @@ function confirmChapterChange() {
 
   selectedObjectiveChapter = pendingChapterChange;
   state.chapterObjectives[selectedObjectiveChapter] = Array.from(
-    { length: chapterObjectiveCounts[selectedObjectiveChapter] },
+    { length: chapterObjectiveCounts[selectedObjectiveChapter] + 1 },
     () => false
   );
   resetMapAndSight();
@@ -1036,11 +1046,26 @@ function confirmChapterChange() {
 
 function closeCraftModal() {
   craftModal.hidden = true;
+  closeCraftOptionModal();
 
-  if (searchModal.hidden && treasureModal.hidden && settingsModal.hidden && profileNameModal.hidden && objectiveCompleteModal.hidden && chapterChangeModal.hidden && inventoryModal.hidden) {
+  if (craftOptionModal.hidden && searchModal.hidden && treasureModal.hidden && settingsModal.hidden && profileNameModal.hidden && objectiveCompleteModal.hidden && chapterChangeModal.hidden && inventoryModal.hidden) {
     document.body.style.overflow = "";
   }
   resetCraftOptions();
+}
+
+function openCraftOptionModal() {
+  craftOptionModal.hidden = false;
+  document.body.style.overflow = "hidden";
+}
+
+function closeCraftOptionModal() {
+  craftOptionModal.hidden = true;
+  resetCraftOptions();
+
+  if (craftModal.hidden && searchModal.hidden && treasureModal.hidden && settingsModal.hidden && profileNameModal.hidden && objectiveCompleteModal.hidden && chapterChangeModal.hidden && inventoryModal.hidden) {
+    document.body.style.overflow = "";
+  }
 }
 
 function openInventoryModal(title, eyebrow = "Lara Board") {
@@ -1054,7 +1079,7 @@ function closeInventoryModal() {
   inventoryModal.hidden = true;
   inventoryModalBody.replaceChildren();
 
-  if (craftModal.hidden && searchModal.hidden && treasureModal.hidden && settingsModal.hidden && profileNameModal.hidden && objectiveCompleteModal.hidden && chapterChangeModal.hidden) {
+  if (craftModal.hidden && craftOptionModal.hidden && searchModal.hidden && treasureModal.hidden && settingsModal.hidden && profileNameModal.hidden && objectiveCompleteModal.hidden && chapterChangeModal.hidden) {
     document.body.style.overflow = "";
   }
 
@@ -1067,7 +1092,6 @@ function closeInventoryModal() {
 
 function resetCraftOptions() {
   pendingVariableRecipe = null;
-  craftOptionPanel.hidden = true;
   craftOptionTitle.textContent = "Choose a craft option";
   craftOptionCopy.textContent = "Select how you want to resolve this craft.";
 }
@@ -1147,7 +1171,7 @@ function renderChapterObjectives() {
     });
 
     const text = document.createElement("span");
-    text.textContent = `Objective ${index + 1}`;
+    text.textContent = index === objectives.length - 1 ? exitMapObjectiveLabel : `Objective ${index + 1}`;
 
     label.append(checkbox, text);
     chapterObjectiveList.append(label);
@@ -1315,11 +1339,17 @@ function renderInventory() {
     const list = document.getElementById(config.listId);
     const count = document.getElementById(config.countId);
     list.replaceChildren();
-    count.textContent = `${state[type].length} / ${config.limit}`;
+    count.textContent = Number.isFinite(config.limit) ? `${state[type].length} / ${config.limit}` : String(state[type].length);
 
     if (state[type].length === 0) {
       list.classList.add("empty-list");
-      list.textContent = type === "weapon" ? "No weapons equipped." : `No ${config.plural} equipped.`;
+      if (type === "weapon") {
+        list.textContent = "No weapons equipped.";
+      } else if (type === "research") {
+        list.textContent = "No research cards recorded.";
+      } else {
+        list.textContent = `No ${config.plural} equipped.`;
+      }
       return;
     }
 
@@ -1630,7 +1660,7 @@ function confirmTreasureChoice() {
 }
 
 function startAddItemFlow(type, onComplete) {
-  if (state[type].length >= inventoryConfig[type].limit) {
+  if (Number.isFinite(inventoryConfig[type].limit) && state[type].length >= inventoryConfig[type].limit) {
     showDiscardFlow(type, () => showItemForm(type, onComplete));
     return;
   }
@@ -1712,10 +1742,7 @@ function showVariableRecipeOptions(recipeKey) {
       note.textContent = `Cost: ${formatCost(resolvedCost ?? { [recipe.resource]: costAmount })}`;
     }
   });
-  craftOptionPanel.hidden = false;
-  requestAnimationFrame(() => {
-    craftOptionPanel.scrollIntoView({ block: "end", behavior: "smooth" });
-  });
+  openCraftOptionModal();
 }
 
 function completeVariableCraft(recipeKey, costAmount, resolvedCost) {
@@ -1724,6 +1751,7 @@ function completeVariableCraft(recipeKey, costAmount, resolvedCost) {
 
   applyCost(resolvedCost);
   const craftedType = recipeKey;
+  closeCraftOptionModal();
   closeCraftModal();
   startAddItemFlow(craftedType, () => setCraftStatus(`Crafted ${recipe.label} (${detail}).`));
 }
@@ -1891,6 +1919,7 @@ openSettingsModalButton.addEventListener("click", openSettingsModal);
 openCraftModalButton.addEventListener("click", openCraftModal);
 openSearchModalButton.addEventListener("click", openSearchModal);
 closeCraftModalButton.addEventListener("click", closeCraftModal);
+closeCraftOptionModalButton.addEventListener("click", closeCraftOptionModal);
 closeSearchModalButton.addEventListener("click", closeSearchModal);
 closeTreasureModalButton.addEventListener("click", closeTreasureChoiceModal);
 closeSettingsModalButton.addEventListener("click", closeSettingsModal);
@@ -1904,6 +1933,14 @@ craftModal.addEventListener("click", (event) => {
 
   if (target instanceof HTMLElement && target.dataset.closeModal === "true") {
     closeCraftModal();
+  }
+});
+
+craftOptionModal.addEventListener("click", (event) => {
+  const target = event.target;
+
+  if (target instanceof HTMLElement && target.dataset.closeCraftOptionModal === "true") {
+    closeCraftOptionModal();
   }
 });
 
@@ -1985,6 +2022,11 @@ document.addEventListener("keydown", (event) => {
 
   if (!treasureModal.hidden) {
     closeTreasureChoiceModal();
+    return;
+  }
+
+  if (!craftOptionModal.hidden) {
+    closeCraftOptionModal();
     return;
   }
 

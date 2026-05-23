@@ -215,6 +215,17 @@
             </div>
             <div id="ability-list" class="inventory-list empty-list">No abilities learned.</div>
           </section>
+
+          <section class="inventory-section" data-inventory-section="research">
+            <div class="inventory-heading">
+              <div>
+                <h3>Research Cards</h3>
+                <p id="research-count">0</p>
+              </div>
+              <button type="button" class="add-button" data-add-item="research" aria-label="Add research card">+</button>
+            </div>
+            <div id="research-list" class="inventory-list empty-list">No research cards recorded.</div>
+          </section>
         </div>
       </div>
     </section>
@@ -294,12 +305,20 @@
         <button type="button" class="recipe-button" data-craft-item="outfit">Outfit<span>Choose draw 1 or draw 2 keep 1</span></button>
         <button type="button" class="recipe-button" data-craft-item="ability">Ability<span>Choose draw 1 or draw 2 keep 1</span></button>
       </div>
+    </div>
+  </div>
 
-      <div id="craft-option-panel" class="craft-option-panel" hidden>
+  <div id="craft-option-modal" class="modal stacked-modal" role="dialog" aria-modal="true" aria-labelledby="craft-option-title" hidden>
+    <div class="modal-backdrop" data-close-craft-option-modal="true"></div>
+    <div class="modal-card craft-option-modal-card">
+      <div class="modal-header">
         <div class="option-heading">
           <h3 id="craft-option-title">Choose a craft option</h3>
           <p id="craft-option-copy">Select how you want to resolve this craft.</p>
         </div>
+        <button id="close-craft-option-modal" class="icon-button" type="button" aria-label="Close craft option modal">X</button>
+      </div>
+      <div id="craft-option-panel" class="craft-option-panel">
         <div class="option-actions">
           <button type="button" class="option-button" data-craft-option="5">Draw 1<span>Cost: 5</span></button>
           <button type="button" class="option-button" data-craft-option="7">Draw 2 and keep 1<span>Cost: 7</span></button>
