@@ -67,7 +67,7 @@ const confirmObjectiveCompleteButton = document.getElementById("confirm-objectiv
 const chapterChangeCopy = document.getElementById("chapter-change-copy");
 const cancelChapterChangeButton = document.getElementById("cancel-chapter-change");
 const confirmChapterChangeButton = document.getElementById("confirm-chapter-change");
-const eventDiscardedValue = document.getElementById("event-discarded-value");
+const eventDiscardedInput = document.getElementById("event-discarded-input");
 const decreaseEventDiscardedButton = document.getElementById("decrease-event-discarded");
 const increaseEventDiscardedButton = document.getElementById("increase-event-discarded");
 const eventRemovedInputs = document.querySelectorAll("[data-event-removed]");
@@ -209,6 +209,18 @@ function clampNumber(value) {
 
 function updateAutoWidth(input) {
   input.style.width = "100%";
+}
+
+function commitNumberInputOnEditComplete(input, onCommit) {
+  const commit = () => onCommit(input.value);
+
+  input.addEventListener("change", commit);
+  input.addEventListener("blur", commit);
+  input.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      input.blur();
+    }
+  });
 }
 
 function getStoredProfiles() {
@@ -1197,7 +1209,7 @@ function maybePromptChapterComplete(chapterIndex) {
 }
 
 function renderAdventureLog() {
-  eventDiscardedValue.textContent = state.eventDiscarded;
+  eventDiscardedInput.value = state.eventDiscarded;
   invadedLevelInput.value = state.invadedLevel;
   sightTokenButton.setAttribute("aria-pressed", String(state.sightSeen));
   sightTokenLabel.textContent = state.sightSeen ? "Seen" : "Hidden";
@@ -1289,7 +1301,7 @@ function renderEnemies() {
     xInput.min = "1";
     xInput.max = "16";
     xInput.value = enemy.x;
-    xInput.addEventListener("input", () => {
+    commitNumberInputOnEditComplete(xInput, () => {
       enemy.x = clampCoordinate(xInput.value);
       xInput.value = enemy.x;
       saveCurrentProfile();
@@ -1304,7 +1316,7 @@ function renderEnemies() {
     yInput.min = "1";
     yInput.max = "16";
     yInput.value = enemy.y;
-    yInput.addEventListener("input", () => {
+    commitNumberInputOnEditComplete(yInput, () => {
       enemy.y = clampCoordinate(yInput.value);
       yInput.value = enemy.y;
       saveCurrentProfile();
@@ -1847,6 +1859,7 @@ chapterObjectiveSelect.addEventListener("change", () => {
 
 decreaseEventDiscardedButton.addEventListener("click", () => setEventDiscarded(state.eventDiscarded - 1));
 increaseEventDiscardedButton.addEventListener("click", () => setEventDiscarded(state.eventDiscarded + 1));
+commitNumberInputOnEditComplete(eventDiscardedInput, setEventDiscarded);
 
 eventRemovedInputs.forEach((input) => {
   input.addEventListener("change", () => {
@@ -1855,7 +1868,7 @@ eventRemovedInputs.forEach((input) => {
   });
 });
 
-invadedLevelInput.addEventListener("input", () => setInvadedLevel(invadedLevelInput.value));
+commitNumberInputOnEditComplete(invadedLevelInput, setInvadedLevel);
 decreaseInvadedLevelButton.addEventListener("click", () => setInvadedLevel(state.invadedLevel - 1));
 increaseInvadedLevelButton.addEventListener("click", () => setInvadedLevel(state.invadedLevel + 1));
 
@@ -1865,8 +1878,8 @@ sightTokenButton.addEventListener("click", () => {
   saveCurrentProfile();
 });
 
-mapInputs.laraX.addEventListener("input", () => setMapCoordinate(["lara", "x"], mapInputs.laraX.value));
-mapInputs.laraY.addEventListener("input", () => setMapCoordinate(["lara", "y"], mapInputs.laraY.value));
+commitNumberInputOnEditComplete(mapInputs.laraX, () => setMapCoordinate(["lara", "x"], mapInputs.laraX.value));
+commitNumberInputOnEditComplete(mapInputs.laraY, () => setMapCoordinate(["lara", "y"], mapInputs.laraY.value));
 addEnemyButton.addEventListener("click", addEnemy);
 
 doorButtons.forEach((button) => {
@@ -1889,9 +1902,7 @@ resourceCards.forEach((card) => {
   const input = resourceInputs[resource];
   const buttons = card.querySelectorAll(".stepper-button");
 
-  input.addEventListener("input", () => {
-    setResourceValue(resource, input.value);
-  });
+  commitNumberInputOnEditComplete(input, () => setResourceValue(resource, input.value));
 
   updateAutoWidth(input);
 
