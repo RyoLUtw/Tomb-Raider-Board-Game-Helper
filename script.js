@@ -80,9 +80,11 @@ const mapInputs = {
   laraX: document.getElementById("lara-x"),
   laraY: document.getElementById("lara-y"),
 };
+const specialNoteInput = document.getElementById("special-note-input");
 const addEnemyButton = document.getElementById("add-enemy");
 const enemyList = document.getElementById("enemy-list");
 const doorButtons = document.querySelectorAll("[data-door]");
+const researchCubeButtons = document.querySelectorAll("[data-research-cube]");
 
 const resourceInputs = {
   oil: document.getElementById("resource-oil"),
@@ -122,7 +124,7 @@ const inventoryConfig = {
   weapon: { label: "weapon", plural: "weapons", limit: 2, listId: "weapon-list", countId: "weapon-count" },
   outfit: { label: "outfit", plural: "outfits", limit: 1, listId: "outfit-list", countId: "outfit-count" },
   ability: { label: "ability", plural: "abilities", limit: 2, listId: "ability-list", countId: "ability-count" },
-  research: { label: "research card", plural: "research cards", limit: Infinity, listId: "research-list", countId: "research-count" },
+  research: { label: "research card", plural: "research cards", limit: 5, listId: "research-list", countId: "research-count" },
 };
 
 const state = {
@@ -130,6 +132,7 @@ const state = {
   outfit: [],
   ability: [],
   research: [],
+  researchCubes: 0,
   specialDice: 0,
   chapters: Array.from({ length: chapterCount }, () => false),
   chapterObjectives: createEmptyChapterObjectives(),
@@ -150,6 +153,7 @@ const state = {
       blue: false,
       gold: false,
     },
+    specialNote: "",
   },
 };
 
@@ -163,7 +167,7 @@ const fixedRecipes = {
     cost: { cloth: 1, oil: 1 },
   },
   "special-dice": {
-    label: "1 special die",
+    label: "2 special dice",
     cost: { scrap: 1, cloth: 1 },
   },
 };
@@ -265,6 +269,7 @@ function createDefaultAdventureState() {
         blue: false,
         gold: false,
       },
+      specialNote: "",
     },
   };
 }
@@ -285,6 +290,7 @@ function createSavePayload(name = defaultProfileName) {
       outfit: state.outfit,
       ability: state.ability,
       research: state.research,
+      researchCubes: state.researchCubes,
       specialDice: state.specialDice,
       chapters: state.chapters,
       chapterObjectives: state.chapterObjectives,
@@ -323,7 +329,8 @@ function normalizeSavePayload(payload, fallbackId = `profile-${Date.now()}`) {
       weapon: Array.isArray(sourceState.weapon) ? sourceState.weapon : [],
       outfit: Array.isArray(sourceState.outfit) ? sourceState.outfit : [],
       ability: Array.isArray(sourceState.ability) ? sourceState.ability : [],
-      research: Array.isArray(sourceState.research) ? sourceState.research : [],
+      research: Array.isArray(sourceState.research) ? sourceState.research.slice(0, inventoryConfig.research.limit) : [],
+      researchCubes: Math.min(2, clampNumber(sourceState.researchCubes)),
       specialDice: Math.min(6, clampNumber(sourceState.specialDice)),
       chapters: Array.from({ length: chapterCount }, (_, index) => Boolean(sourceState.chapters?.[index])),
       chapterObjectives: Array.from({ length: chapterCount }, (_, chapterIndex) =>
@@ -357,6 +364,7 @@ function normalizeSavePayload(payload, fallbackId = `profile-${Date.now()}`) {
           blue: Boolean(sourceDoors.blue),
           gold: Boolean(sourceDoors.gold),
         },
+        specialNote: typeof sourceMap.specialNote === "string" ? sourceMap.specialNote : defaultAdventure.map.specialNote,
       },
     },
     hp: Math.min(10, Math.max(1, clampNumber(source.hp) || 10)),
@@ -407,6 +415,7 @@ function applySaveProfile(profile) {
   state.outfit = normalized.state.outfit;
   state.ability = normalized.state.ability;
   state.research = normalized.state.research;
+  state.researchCubes = normalized.state.researchCubes;
   state.specialDice = normalized.state.specialDice;
   state.chapters = normalized.state.chapters;
   state.chapterObjectives = normalized.state.chapterObjectives;
@@ -462,6 +471,7 @@ function createProfileFromName(name) {
   state.outfit = [];
   state.ability = [];
   state.research = [];
+  state.researchCubes = 0;
   state.specialDice = 0;
   state.chapters = Array.from({ length: chapterCount }, () => false);
   state.chapterObjectives = createEmptyChapterObjectives();
@@ -1215,6 +1225,7 @@ function renderAdventureLog() {
   sightTokenLabel.textContent = state.sightSeen ? "Seen" : "Hidden";
   mapInputs.laraX.value = state.map.lara.x;
   mapInputs.laraY.value = state.map.lara.y;
+  specialNoteInput.value = state.map.specialNote || "";
   renderEnemies();
 
   eventRemovedInputs.forEach((input) => {
@@ -1222,9 +1233,9 @@ function renderAdventureLog() {
   });
 
   doorButtons.forEach((button) => {
-    const isOpen = Boolean(state.map.doors[button.dataset.door]);
-    button.textContent = isOpen ? "open" : "close";
-    button.setAttribute("aria-pressed", String(isOpen));
+    const isFlipped = Boolean(state.map.doors[button.dataset.door]);
+    button.textContent = isFlipped ? "flipped" : "original";
+    button.setAttribute("aria-pressed", String(isFlipped));
   });
 }
 
@@ -1244,6 +1255,11 @@ function setMapCoordinate(path, nextValue) {
   const [target, axis] = path;
   state.map[target][axis] = clampCoordinate(nextValue);
   renderAdventureLog();
+  saveCurrentProfile();
+}
+
+function setSpecialNote(nextValue) {
+  state.map.specialNote = nextValue;
   saveCurrentProfile();
 }
 
@@ -1407,8 +1423,36 @@ function renderInventory() {
   });
 
   specialDiceValue.textContent = state.specialDice;
+  renderResearchCubes();
   updateRecipeAvailability();
   saveCurrentProfile();
+}
+
+function renderResearchCubes() {
+  researchCubeButtons.forEach((button) => {
+    const index = Number.parseInt(button.dataset.researchCube, 10);
+    const isFilled = index < state.researchCubes;
+    button.classList.toggle("filled", isFilled);
+    button.setAttribute("aria-pressed", String(isFilled));
+  });
+}
+
+function setResearchCubes(nextValue) {
+  state.researchCubes = Math.min(2, Math.max(0, clampNumber(nextValue)));
+  renderInventory();
+}
+
+function handleResearchCubeClick(cubeIndex) {
+  const nextValue = cubeIndex < state.researchCubes ? cubeIndex : cubeIndex + 1;
+
+  if (nextValue >= 3) {
+    state.researchCubes = 0;
+    renderInventory();
+    startAddItemFlow("research");
+    return;
+  }
+
+  setResearchCubes(nextValue);
 }
 
 function removeItem(type, id) {
@@ -1707,8 +1751,9 @@ function completeFixedCraft(recipeKey, resolvedCost) {
   }
 
   if (recipeKey === "special-dice") {
-    setSpecialDice(state.specialDice + 1);
-    setCraftStatus("Crafted 1 special die.");
+    const added = Math.min(2, 6 - state.specialDice);
+    setSpecialDice(state.specialDice + added);
+    setCraftStatus(`Crafted ${added} special ${added === 1 ? "die" : "dice"}.`);
   }
 
   closeCraftModal();
@@ -1880,6 +1925,7 @@ sightTokenButton.addEventListener("click", () => {
 
 commitNumberInputOnEditComplete(mapInputs.laraX, () => setMapCoordinate(["lara", "x"], mapInputs.laraX.value));
 commitNumberInputOnEditComplete(mapInputs.laraY, () => setMapCoordinate(["lara", "y"], mapInputs.laraY.value));
+specialNoteInput.addEventListener("input", () => setSpecialNote(specialNoteInput.value));
 addEnemyButton.addEventListener("click", addEnemy);
 
 doorButtons.forEach((button) => {
@@ -1888,6 +1934,12 @@ doorButtons.forEach((button) => {
     state.map.doors[door] = !state.map.doors[door];
     renderAdventureLog();
     saveCurrentProfile();
+  });
+});
+
+researchCubeButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    handleResearchCubeClick(Number.parseInt(button.dataset.researchCube, 10));
   });
 });
 

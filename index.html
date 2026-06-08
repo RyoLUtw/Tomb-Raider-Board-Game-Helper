@@ -118,7 +118,7 @@
           <div class="inventory-heading">
             <div>
               <h3>Map</h3>
-              <p>Lara, enemies, and door state.</p>
+              <p>Lara, enemies, and switch state.</p>
             </div>
           </div>
           <div class="map-grid">
@@ -141,10 +141,14 @@
                 <span class="counter-label">Door Status</span>
               </div>
               <div class="door-list">
-                <div class="door-row"><span>Red Door</span><button type="button" class="modal-secondary door-toggle" data-door="red">close</button></div>
-                <div class="door-row"><span>Blue Door</span><button type="button" class="modal-secondary door-toggle" data-door="blue">close</button></div>
-                <div class="door-row"><span>Gold Door</span><button type="button" class="modal-secondary door-toggle" data-door="gold">close</button></div>
+                <div class="door-row"><span>Red Door</span><button type="button" class="modal-secondary door-toggle" data-door="red">original</button></div>
+                <div class="door-row"><span>Blue Door</span><button type="button" class="modal-secondary door-toggle" data-door="blue">original</button></div>
+                <div class="door-row"><span>Gold Door</span><button type="button" class="modal-secondary door-toggle" data-door="gold">original</button></div>
               </div>
+            </div>
+            <div class="special-note-card counter-card">
+              <label for="special-note-input" class="counter-label">Special Note</label>
+              <textarea id="special-note-input" class="modal-field special-note-input" rows="4" placeholder="Level specific details"></textarea>
             </div>
           </div>
         </section>
@@ -221,6 +225,11 @@
               <div>
                 <h3>Research Cards</h3>
                 <p id="research-count">0</p>
+                <div class="research-cubes" aria-label="Research cubes obtained">
+                  <button type="button" class="research-cube" data-research-cube="0" aria-label="Toggle research cube 1"></button>
+                  <button type="button" class="research-cube" data-research-cube="1" aria-label="Toggle research cube 2"></button>
+                  <button type="button" class="research-cube" data-research-cube="2" aria-label="Toggle research cube 3"></button>
+                </div>
               </div>
               <button type="button" class="add-button" data-add-item="research" aria-label="Add research card">+</button>
             </div>
@@ -300,7 +309,7 @@
       <div class="recipe-list">
         <button type="button" class="recipe-button" data-craft-item="bullets">5 Bullets<span>1 oil + 1 scrap</span></button>
         <button type="button" class="recipe-button" data-craft-item="medpack">3 HP Med Pack<span>1 cloth + 1 oil</span></button>
-        <button type="button" class="recipe-button" data-craft-item="special-dice">1 Special Die<span>1 scrap + 1 cloth</span></button>
+        <button type="button" class="recipe-button" data-craft-item="special-dice">2 Special Dice<span>1 scrap + 1 cloth</span></button>
         <button type="button" class="recipe-button" data-craft-item="weapon">Weapon<span>Choose draw 1 or draw 2 keep 1</span></button>
         <button type="button" class="recipe-button" data-craft-item="outfit">Outfit<span>Choose draw 1 or draw 2 keep 1</span></button>
         <button type="button" class="recipe-button" data-craft-item="ability">Ability<span>Choose draw 1 or draw 2 keep 1</span></button>
